@@ -5,6 +5,7 @@ This is the simple game called Alien Invasion which is implemented in Go.
 # Installation
 
     go build .
+    cp config.txt.template config.txt
     
 # Usage
 

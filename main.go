@@ -40,6 +40,6 @@ func main() {
 
 	mapString := app.cityMap.ExportCityMap()
 	n, err := f.WriteString(mapString)
-	fmt.Printf("wrote %d bytes\n", n)
+	log.Printf("wrote %d bytes\n", n)
 
 }
