@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"log"
 	"strings"
 )
 
@@ -14,17 +15,20 @@ const (
 	directionWest  direction = "west"
 )
 
+// CityMap represents a world map
 type CityMap struct {
 	cities map[string]*City
 	list   *City
 }
 
+// City describes a single city and its neighbours
 type City struct {
 	name           string
 	neighbours     map[direction]*City // neighbours routes
 	neighbourNames map[string]bool     // neighbours uniqueness map
 }
 
+// NewCityMap creates an entire map of cities and the roads between them
 func NewCityMap(config *bufio.Scanner) CityMap {
 	rawMap := make(map[string]map[direction]string)
 	citiesList := make(map[string]bool)
@@ -42,6 +46,7 @@ func NewCityMap(config *bufio.Scanner) CityMap {
 			if len(d) != 2 {
 				continue
 			}
+			// validate direction
 			dir := direction(d[0])
 			if !(dir == directionNorth || dir == directionEast || dir == directionSouth || dir == directionWest) {
 				continue
@@ -73,6 +78,7 @@ func NewCityMap(config *bufio.Scanner) CityMap {
 	return cityMap
 }
 
+// linkCities adds a road from one city to another in the given direction
 func linkCities(c CityMap, city, neighbour string, dir direction) {
 	if _, ok := c.cities[city].neighbours[dir]; !ok {
 		// make sure one city has only 1 link to the other one
@@ -96,4 +102,22 @@ func getOppositeDirection(d direction) direction {
 
 	}
 	return directionNorth
+}
+
+// destroyCity removes the city from the map along with all the roads leading in and out of it
+func (cm *CityMap) destroyCity(name string) {
+	city, ok := cm.cities[name]
+	if !ok {
+		log.Printf("DestroyCity failed: city '%s' does not exist", name)
+		return
+	}
+
+	// destroy all roads leading to the current city
+	for dir, neighbour := range city.neighbours {
+		delete(neighbour.neighbours, getOppositeDirection(dir))
+		delete(neighbour.neighbourNames, name)
+	}
+
+	// delete the city itself from the map
+	delete(cm.cities, name)
 }
