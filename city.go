@@ -15,9 +15,17 @@ const (
 	directionWest  direction = "west"
 )
 
+var directions = []direction{
+	directionNorth,
+	directionEast,
+	directionSouth,
+	directionWest,
+}
+
 // CityMap represents a world map
 type CityMap struct {
-	cities map[string]*City
+	cities     map[string]*City
+	citiesList []*City
 }
 
 // City describes a single city and its neighbours
@@ -57,12 +65,15 @@ func NewCityMap(config *bufio.Scanner) *CityMap {
 
 	// add all mentioned cities to the list
 	cityMap := &CityMap{cities: make(map[string]*City)}
+	cityMap.citiesList = make([]*City, 0, len(citiesList))
 	for city := range citiesList {
-		cityMap.cities[city] = &City{
+		c := &City{
 			name:           city,
 			neighbours:     make(map[direction]*City),
 			neighbourNames: make(map[string]bool),
 		}
+		cityMap.cities[city] = c
+		cityMap.citiesList = append(cityMap.citiesList, c)
 	}
 
 	// go through each city and build the directions map
@@ -104,19 +115,28 @@ func getOppositeDirection(d direction) direction {
 }
 
 // destroyCity removes the city from the map along with all the roads leading in and out of it
-func (cm *CityMap) destroyCity(name string) {
-	city, ok := cm.cities[name]
-	if !ok {
-		log.Printf("DestroyCity failed: city '%s' does not exist", name)
+func (cm *CityMap) destroyCity(city *City) {
+	if city == nil {
+		log.Print("DestroyCity failed: city does not exist")
 		return
 	}
 
 	// destroy all roads leading to the current city
 	for dir, neighbour := range city.neighbours {
 		delete(neighbour.neighbours, getOppositeDirection(dir))
-		delete(neighbour.neighbourNames, name)
+		delete(neighbour.neighbourNames, city.name)
 	}
 
 	// delete the city itself from the map
-	delete(cm.cities, name)
+	delete(cm.cities, city.name)
+
+	// delete the city from the cities list
+	for i, c := range cm.citiesList {
+		if c == city {
+			// remove the found element from the slice without preserving the order
+			cm.citiesList[i] = cm.citiesList[len(cm.citiesList)-1]
+			cm.citiesList = cm.citiesList[:len(cm.citiesList)-1]
+			break
+		}
+	}
 }

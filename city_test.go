@@ -37,7 +37,8 @@ func TestCityMap_destroyCity(t *testing.T) {
 	textCfg := "Foo north=Bar"
 	config := bufio.NewScanner(strings.NewReader(textCfg))
 	cityMap := NewCityMap(config)
-	cityMap.destroyCity("Foo")
+	cityToDestroy := cityMap.cities["Foo"]
+	cityMap.destroyCity(cityToDestroy)
 
 	leftover := &City{
 		name:           "Bar",

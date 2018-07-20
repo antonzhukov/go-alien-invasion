@@ -7,9 +7,11 @@ import (
 	"os"
 )
 
+const maxMovementsNum = 10000
+
 func main() {
 	// init city config
-	file, err := os.Open("data/config.txt")
+	file, err := os.Open("config.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
