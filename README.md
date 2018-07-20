@@ -24,5 +24,5 @@ I assume that if there are more than 1 alien in the city, they destroy it and di
 1. There's a slice of cities in the CityMap. It is required only for aliens to disembark
 at a random city from this list. The bad thing about this slice is that we need to
 maintain the actual list of cities, which causes O(n) run everytime we destroy a city.
-Honestly, the other way to randomly pick a city is start a `for` cycle and it will give 
+Honestly, the other way to randomly pick a city is start a `for` cycle on a map and it will give 
 us the random city. But with `rand` package I wanted to make it more explicit.
