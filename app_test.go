@@ -46,7 +46,7 @@ func TestApplication_Run_CityDestroyed(t *testing.T) {
 			0: foo,
 			1: bar,
 		},
-		direction: direction("east"),
+		direction: directionEast,
 	}
 
 	app := NewApplication(cityMap, strat, 2, 2)
@@ -88,7 +88,7 @@ func TestApplication_Run_NoneIsDestroyed(t *testing.T) {
 			0: foo,
 			1: zoo,
 		},
-		direction: direction("east"),
+		direction: directionEast,
 	}
 
 	app := NewApplication(cityMap, strat, 2, 2)

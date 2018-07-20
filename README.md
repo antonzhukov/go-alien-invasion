@@ -2,6 +2,14 @@
 
 This is the simple game called Alien Invasion which is implemented in Go.
 
+# Installation
+
+    go build .
+    
+# Usage
+
+    ./go-alien-invasion -aliens=5
+
 ## Assumptions
 
 1. If in the file there's a city A which has a road to city B, 

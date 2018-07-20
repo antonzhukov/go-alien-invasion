@@ -20,16 +20,16 @@ func TestNewCityMap(t *testing.T) {
 		t.Errorf("expected neighbour Bar")
 	}
 
-	if cityMap.cities["Foo"].neighbours[direction("north")].name != "Bar" {
-		t.Errorf("expected neighbour Bar, got %s", cityMap.cities["Foo"].neighbours[direction("north")].name)
+	if cityMap.cities["Foo"].neighbours[directionNorth].name != "Bar" {
+		t.Errorf("expected neighbour Bar, got %s", cityMap.cities["Foo"].neighbours[directionNorth].name)
 	}
 
 	if !reflect.DeepEqual(cityMap.cities["Bar"].neighbourNames, map[string]bool{"Foo": true}) {
 		t.Errorf("expected neighbour Bar")
 	}
 
-	if cityMap.cities["Bar"].neighbours[direction("south")].name != "Foo" {
-		t.Errorf("expected neighbour Foo, got %s", cityMap.cities["Bar"].neighbours[direction("south")].name)
+	if cityMap.cities["Bar"].neighbours[directionSouth].name != "Foo" {
+		t.Errorf("expected neighbour Foo, got %s", cityMap.cities["Bar"].neighbours[directionSouth].name)
 	}
 }
 
@@ -52,5 +52,38 @@ func TestCityMap_destroyCity(t *testing.T) {
 
 	if !reflect.DeepEqual(leftover, cityMap.cities["Bar"]) {
 		t.Errorf("expected leftover %#v, got %#v", leftover, cityMap.cities["Bar"])
+	}
+}
+
+func TestCityMap_ExportCityMap(t *testing.T) {
+	type fields struct {
+		citiesList []*City
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{"empty", fields{}, ""},
+		{
+			"valid",
+			fields{
+				citiesList: []*City{
+					{name: "Foo", neighbours: map[direction]*City{directionWest: {name: "Bar"}}},
+					{name: "Baz", neighbours: map[direction]*City{directionEast: {name: "Faz"}}},
+				},
+			},
+			"Foo west=Bar\nBaz east=Faz\n",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cm := &CityMap{
+				citiesList: tt.fields.citiesList,
+			}
+			if got := cm.ExportCityMap(); got != tt.want {
+				t.Errorf("CityMap.ExportCityMap() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

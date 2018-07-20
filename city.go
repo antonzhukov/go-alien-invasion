@@ -140,3 +140,18 @@ func (cm *CityMap) destroyCity(city *City) {
 		}
 	}
 }
+
+// ExportCityMap exports city map to the original format
+func (cm *CityMap) ExportCityMap() string {
+	var export string
+	for _, city := range cm.citiesList {
+		export += city.name
+		if len(city.neighbours) > 0 {
+			for dir, neighbour := range city.neighbours {
+				export += " " + string(dir) + "=" + neighbour.name
+			}
+		}
+		export += "\n"
+	}
+	return export
+}
